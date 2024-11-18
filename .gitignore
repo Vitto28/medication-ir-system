@@ -4,6 +4,7 @@ __pycache__/
 
 # Ignore data directory
 backend/data/
+backend/indexing/medications_core/data
 
 # Ignore Node.js dependencies and build files
 frontend/node_modules/
