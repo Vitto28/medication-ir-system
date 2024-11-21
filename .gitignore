@@ -7,5 +7,5 @@ backend/data/
 backend/indexing/medications_core/data
 
 # Ignore Node.js dependencies and build files
-frontend/node_modules/
-frontend/dist/
+frontend/med-ui/node_modules/
+frontend/med-ui/dist/
