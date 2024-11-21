@@ -9,6 +9,9 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+// Store
+import store from './store'
+
 // Components
 import App from './App.vue'
 
@@ -17,7 +20,7 @@ const vuetify = createVuetify({
   directives,
 })
 
-createApp(App).use(vuetify).mount('#app')
+const app = createApp(App).use(vuetify).use(store).mount('#app')
 
 export default createVuetify({
   icons: {
