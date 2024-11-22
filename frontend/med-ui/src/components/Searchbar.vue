@@ -29,21 +29,20 @@ export default {
 </script>
 
 <template>
-  <v-text-field
-    v-model="queryString"
-    :loading="loading"
-    append-inner-icon="mdi-magnify"
-    density="compact"
-    label="Search templates"
-    hint="For example, 'aspirin' or 'headache and fever'"
-    single-line
-    @click:append-inner="search"
-    @keyup.enter="search"
-  ></v-text-field>
+  <v-row class="d-flex flex-column">
+    <v-text-field
+      v-model="queryString"
+      :loading="loading"
+      append-inner-icon="mdi-magnify"
+      density="compact"
+      label="Search for medications"
+      hint="For example, 'aspirin' or 'headache and fever'"
+      single-line
+      @click:append-inner="search"
+      @keyup.enter="search"
+    ></v-text-field>
+  </v-row>
 </template>
 
 <style scoped>
-.v-text-field {
-  min-width: 800px;
-}
 </style>

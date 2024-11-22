@@ -1,10 +1,30 @@
 <template>
-  <div id="header">
+  <v-container>
+    <v-row>
+      <v-col class="d-flex justify-space-between align-center" cols="12">
+        <div>
+          <h1>Search</h1>
+          <p>
+            Enter a query below to search for medications. You can enter specific terms or keywords,
+            or use the advanced filtering options to narrow down your search.
+          </p>
+        </div>
+        <a href="#/"> <v-btn>back to homepage</v-btn></a>
+      </v-col>
+      <v-col class="d-flex" cols="12">
+        <Searchbar />
+      </v-col>
+      <v-col cols="12">
+        <Results />
+      </v-col>
+    </v-row>
+    <!-- <div id="header">
     <a href="#/"> <v-btn>Home</v-btn></a>
     <Searchbar />
-  </div>
+  </div> -->
+  </v-container>
 
-  <Results />
+  <!-- <Results /> -->
 </template>
 
 <script>
