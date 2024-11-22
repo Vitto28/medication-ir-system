@@ -1,7 +1,17 @@
 <template>
   <div id="results">
     <div id="table" class="pane">
-      <v-data-table @click:row="handleRowClick" :headers="headers" :items="results"> </v-data-table>
+      <v-data-table :headers="headers" :items="results" item-value="id" dense>
+        <template v-slot:body="{ items }">
+          <tr class="row" v-for="item in items" :key="item.id" @click="handleRowClick(item.id)">
+            <td>{{ item.name }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.side_effects.join(', ') }}</td>
+            <td>{{ item.dosage }}</td>
+            <td>{{ item.precautions }}</td>
+          </tr>
+        </template>
+      </v-data-table>
     </div>
     <v-expand-x-transition>
       <v-card
@@ -12,31 +22,31 @@
         width="600"
       >
         <div class="d-flex justify-space-between">
-          <v-card-title>{{ results[selectedId].name }}</v-card-title>
+          <v-card-title>{{ selectedResult.name }}</v-card-title>
           <v-btn size="x-small" class="mr-2 mt-2 bg-success" icon @click="show = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </div>
         <v-card-text>
-          <p>{{ results[selectedId].description }}</p>
+          <p>{{ selectedResult.description }}</p>
           <p>Some of the side effects include:</p>
           <ul class="ml-4">
-            <li v-for="effect in results[selectedId].side_effects" :key="effect">
+            <li v-for="effect in selectedResult.side_effects" :key="effect">
               {{ effect }}
             </li>
           </ul>
+          <p>Dosage: {{ selectedResult.dosage }}</p>
+          <p>Precautions: {{ selectedResult.precautions }}</p>
         </v-card-text>
       </v-card>
     </v-expand-x-transition>
   </div>
-  <v-btn @click="show = true">open</v-btn>
-  <v-btn @click="show = false">close</v-btn>
 </template>
 
 <script>
 export default {
   data: () => ({
-    selectedId: 2,
+    selectedId: null,
     show: false,
     // available headers: name, description, side effects, dosage, precautions
     headers: [
@@ -51,9 +61,13 @@ export default {
     results() {
       return this.$store.getters.results
     },
+    selectedResult() {
+      return this.results.find((result) => result.id == this.selectedId) || {}
+    },
   },
   methods: {
-    handleRowClick(row) {
+    handleRowClick(id) {
+      this.selectedId = id
       this.show = true
     },
   },
@@ -68,7 +82,7 @@ export default {
 #table {
   width: 100%;
 }
-.v-data-table__tr:hover {
+.row:hover {
   cursor: pointer;
   background-color: hsla(160, 100%, 37%, 0.2);
 }
