@@ -7,6 +7,7 @@ export default createStore({
     query: {},
     // TODO: add query params
     results: [],
+    show: false, // shows side panel
   },
   mutations: {
     setQuery(state, query) {
@@ -14,6 +15,9 @@ export default createStore({
     },
     setResults(state, results) {
       state.results = results
+    },
+    setShow(state, bool) {
+      state.show = bool
     },
   },
   actions: {
@@ -30,10 +34,19 @@ export default createStore({
     clearResults({ commit }) {
       commit('setResults', [])
     },
+
+    showPanel({ commit }) {
+      commit('setShow', true)
+    },
+
+    hidePanel({ commit }) {
+      commit('setShow', false)
+    },
   },
 
   getters: {
     query: (state) => state.query,
     results: (state) => state.results,
+    show: (state) => state.show,
   },
 })
