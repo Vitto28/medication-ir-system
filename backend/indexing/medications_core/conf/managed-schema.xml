@@ -456,7 +456,7 @@
   <field name="missdose" type="text_general" multiValued="false" stored="true"/>
   <field name="name" type="text_general" multiValued="false" stored="true"/>
   <field name="overdose" type="text_general" multiValued="false" stored="true"/>
-  <field name="precautions" type="text_general" multiValued="false" stored="true"/>
+  <field name="precautions" type="text_general" multiValued="true" stored="true"/>
   <field name="prescription" type="text_general" multiValued="false" stored="true"/>
   <field name="side_effects" type="text_general" multiValued="true" stored="true"/>
   <field name="storage" type="text_general" multiValued="false" stored="true"/>
