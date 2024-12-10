@@ -69,17 +69,17 @@ def clean_mediline(input_file, output_file):
         for entry in data:
             entry["name"] = entry.pop("drug_name")
 
-        # Filter out entries where 'name' contains 'injection' or 'vaccine' (case insensitive)
-        filtered_data = [
-            entry
-            for entry in data
-            if "injection" not in entry["name"].lower()
-            and "vaccine" not in entry["name"].lower()
-        ]
+        # # Filter out entries where 'name' contains 'injection' or 'vaccine' (case insensitive)
+        # filtered_data = [
+        #     entry
+        #     for entry in data
+        #     if "injection" not in entry["name"].lower()
+        #     and "vaccine" not in entry["name"].lower()
+        # ]
 
         # Cleaning the 'side_effects' array
         # Remove elements that contain the string 'side effects' as a substring
-        for entry in filtered_data:
+        for entry in data:
             entry["side_effects"] = [
                 side_effect
                 for side_effect in entry["side_effects"]
@@ -87,24 +87,24 @@ def clean_mediline(input_file, output_file):
             ]
 
         # Setting the correct brand_name array
-        for entry in filtered_data:
+        for entry in data:
             if "brand_names" in entry:
                 entry["brand_names"] = clean_brand_names(entry["brand_names"])
                 
         # Add format by choosing randomly from one of the following
         # TODO: SHould be based on the data
         formats =  ["tablet", "capsule", "liquid", "dissolving strip", "powder", "gel", "cream", "suppository"]
-        for entry in filtered_data:
+        for entry in data:
             random_subset = random.sample(formats, random.randint(1, len(formats)))
             entry["formats"] = random_subset
 
         # Add id to each entry
-        for entry in filtered_data:
+        for entry in data:
             entry["id"] = generate_id(entry)
 
         # Save the filtered data to the output file
         with open(output_file, "w") as outfile:
-            json.dump(filtered_data, outfile, indent=4)
+            json.dump(data, outfile, indent=4)
 
         print(f"Filtered data saved to {output_file}")
 
