@@ -24,14 +24,24 @@ class MedlinePlusSpider(scrapy.Spider):
     def parse_drug_list(self, response):
         print("Parsing drug list page")
         # Step 3: Extract individual drug links from the list page for the specific letter
-        drug_links = response.xpath("//ul[@id='index']/li/a/@href").extract()
+        drug_links = response.xpath("//ul[@id='index']/li/a")
 
         # Step 4: Iterate over each drug link and follow it to get drug details
         for link in drug_links:
             if self.item_count >= self.limit:
                 break  # Stop if we have already scraped the desired number of items
+
+            # ignore injections and vaccines
+            title = link.xpath("text()").get().lower()
+            if "injection" in title or "vaccine" in title:
+                self.logger.info(f"Skipping: {title}")
+                continue
+            
+            # Obtain href
+            href = link.xpath("@href").get()
+
             self.item_count += 1
-            yield response.follow(link, callback=self.parse_drug_details)
+            yield response.follow(href, callback=self.parse_drug_details)
 
     def parse_drug_details(self, response):
         print("Parsing drug details page")
