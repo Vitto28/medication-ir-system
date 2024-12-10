@@ -5,10 +5,9 @@
         <template v-slot:body="{ items }">
           <tr class="row" v-for="item in items" :key="item.id" @click="handleRowClick(item.id)">
             <td>{{ item.name }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.side_effects.join(', ') }}</td>
-            <td>{{ item.dosage }}</td>
-            <td>{{ item.precautions }}</td>
+            <td>{{ 'None' }}</td>
+            <td class="description">{{ item.prescription }}</td>
+            <td>{{ item.formats.join(', ') }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -51,10 +50,9 @@ export default {
     // available headers: name, description, side effects, dosage, precautions
     headers: [
       { title: 'Name', key: 'name' },
-      { title: 'Description', key: 'description' },
-      { title: 'Side effects', key: 'side_effects' },
-      { title: 'Dosage', key: 'dosage' },
-      { title: 'Precautions', key: 'precautions' },
+      { title: 'Class', key: 'class' },
+      { title: 'Description', value: 'prescription' },
+      { title: 'Formats', value: 'formats' },
     ],
   }),
   computed: {
@@ -88,5 +86,14 @@ export default {
 }
 #info {
   max-height: 100%;
+}
+.row {
+  height: 100px;
+}
+.description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 700px;
 }
 </style>
