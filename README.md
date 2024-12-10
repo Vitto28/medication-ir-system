@@ -27,5 +27,5 @@ From the frontend directory, 'frontend/med-ui', run the corresponding Vue comman
 TODO
 
 ### Indexing documents
-To try out the search functionality, first we need to index some documents into Solr. <br/><br/>
-```bin/solr post -c path/to/project/backend/indexing/medications_core path/to/document/sample.json```
+To try out the search functionality, first we need to index some documents into Solr (ensure the server is running). <br/><br/>
+```bin/solr post -c medications_core path/to/document/sample.json```
