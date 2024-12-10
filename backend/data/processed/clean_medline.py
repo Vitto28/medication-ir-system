@@ -24,7 +24,7 @@ def clean_mediline(input_file, output_file):
         if not isinstance(data, list):
             raise ValueError("Input JSON file must contain an array of objects.")
 
-        # Filter out entries where 'drug_name' contains 'injection' or 'vaccine' (case insensitive)
+        # ===== Filter out entries where 'drug_name' contains 'injection' or 'vaccine' (case insensitive) =====
         filtered_data = [
             entry
             for entry in data
@@ -32,7 +32,16 @@ def clean_mediline(input_file, output_file):
             and "vaccine" not in entry["drug_name"].lower()
         ]
 
-        # Add id to each entry
+        # ===== Cleaning the 'side_effects' array =====
+        # Remove elements that contain the string 'side effects' as a substring
+        for entry in filtered_data:
+            entry["side_effects"] = [
+                side_effect
+                for side_effect in entry["side_effects"]
+                if "side effects" not in side_effect.lower()
+            ]
+
+        # ===== Add id to each entry =====
         for entry in filtered_data:
             entry["id"] = generate_id(entry)
 
