@@ -451,6 +451,7 @@
   <field name="_version_" type="plong" indexed="false" stored="false"/>
   <field name="brand_names" type="text_general" multiValued="true" stored="true"/>
   <field name="dosage" type="text_general" multiValued="false" stored="true"/>
+  <field name="formats" type="text_general" multiValued="true" stored="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="missdose" type="text_general" multiValued="false" stored="true"/>
   <field name="name" type="text_general" multiValued="false" stored="true"/>
