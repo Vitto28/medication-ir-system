@@ -7,7 +7,7 @@ class MedlinePlusSpider(scrapy.Spider):
     item_count = 0  # Add a counter to keep track of scraped items
     request_count = 0  # Counter for the number of requests made
     parse_count = 0  # Counter for the number of items parsed
-    limit = 5  # Set the limit for the number of items to scrape
+    limit = 1  # Set the limit for the number of items to scrape and parse
 
     def parse(self, response):
         print("Parsing main page")
@@ -74,9 +74,14 @@ class MedlinePlusSpider(scrapy.Spider):
         storage = response.xpath(
             "//div[@id='storage-conditions']/descendant-or-self::*[self::h3 or self::p or self::ul or self::li]/descendant-or-self::text()"
         ).getall()
-        brand_names = response.xpath(
-            "//div[@id='brand-name-1']/descendant-or-self::*[self::ul or self::li]/descendant-or-self::text()"
-        ).getall()
+        # brand_names = response.xpath("//div[@id='brand-name-1']/descendant-or-self::*[self::ul or self::li]/descendant-or-self::text()").getall()
+        brand_names = response.xpath('//div[@id="section-brandname-1"]//li')
+        result = []
+        for li in brand_names:
+            # Get all text content
+            text = ''.join(li.xpath('.//text()').getall()).strip()
+            result.append(text)
+        brand_names = result
 
         yield {
             "drug_name": drug_name,
