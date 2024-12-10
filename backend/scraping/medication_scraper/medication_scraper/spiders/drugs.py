@@ -2,15 +2,12 @@ import scrapy
 
 class DrugsSpider(scrapy.Spider):
     name = 'drugs'
-    start_urls = ['https://www.drugs.com/']
+    start_urls = ['https://www.drugs.com/drug_information.html']
+    item_count = 0  # Add a counter to keep track of scraped items
+    item_limit = 15  # Set the limit for the number of items to scrape
+
 
     def parse(self, response):
-        # Step 1: Extract the Drugs A-Z link
-        a_to_z_link = response.css("a:contains('Drugs A-Z')::attr(href)").get()
-        if a_to_z_link:
-            yield response.follow(a_to_z_link, callback=self.parse_a_to_z)
-
-    def parse_a_to_z(self, response):
         # Step 2: Extract links for each letter (A-Z)
         letter_links = response.css("nav.ddc-paging li a::attr(href)").extract()
         for link in letter_links:
@@ -18,13 +15,27 @@ class DrugsSpider(scrapy.Spider):
 
     def parse_drug_list(self, response):
         # Step 3: Extract individual drug links
-        drug_links = response.css("ul.ddc-list-column-2 li a::attr(href)").extract()
+        drug_links = response.xpath("//ul[@class='ddc-list-column-2']/li/a/@href").extract()
+
+        # Step 4: Iterate over each drug link and follow it to get drug details
         for link in drug_links:
+            if self.item_count >= self.item_limit:
+                break  # Stop if we have already scraped the desired number of items
             yield response.follow(link, callback=self.parse_drug_details)
 
     def parse_drug_details(self, response):
+        # Increment the item count
+        if self.item_count >= self.item_limit:
+            return  # Stop processing if the limit has been reached
+
+        self.item_count += 1
+        
         # Step 4: Extract drug details using IDs where possible
         title = response.css("h1::text").get()
+        generic_name = response.xpath("//p[@class='drug-subtitle']/b[contains(text(), 'Generic name')]/following-sibling::a/text()").get()
+        drug_class = response.xpath("//p[@class='drug-subtitle']/a[contains(@href, '/drug-class/')]/text()").get()
+        brand_names = response.xpath("//p[@class='drug-subtitle']/b[contains(text(), 'Brand name')]/following-sibling::node()[not(self::b)][following-sibling::b]/text()").getall()
+        dosage_form = response.xpath("//p[@class='drug-subtitle']/b[contains(text(), 'Dosage form')]/following-sibling::text()[1]").get()
         uses = response.xpath("//*[@id='uses']/following-sibling::p[preceding-sibling::*[@id='uses'] and not(preceding-sibling::h2[@id='warnings'])]/descendant-or-self::text()").getall()
         warnings = response.xpath("//*[@id='warnings']/following-sibling::*[not(self::h2)][count(preceding-sibling::h2[@id='warnings']) > 0]/descendant-or-self::text()").getall()
         directions = response.xpath("//*[@id='directions']/following-sibling::*[not(self::h2) and (self::p or self::ul)][preceding-sibling::h2[@id='directions']][following-sibling::h2]/descendant-or-self::text()").getall()
@@ -38,6 +49,10 @@ class DrugsSpider(scrapy.Spider):
 
         yield {
             'title': title,
+            'generic_name': generic_name,
+            'drug_class': drug_class,
+            'brand_names': brand_names,
+            'dosage_form': dosage_form,
             'uses': uses,
             'warnings': warnings,
             'directions': directions,
