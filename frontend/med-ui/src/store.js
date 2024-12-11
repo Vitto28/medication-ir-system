@@ -8,6 +8,8 @@ export default createStore({
     // TODO: add query params
     results: [],
     show: false, // shows side panel
+    brands: {},
+    formats: {},
   },
   mutations: {
     setQuery(state, query) {
@@ -19,6 +21,12 @@ export default createStore({
     setShow(state, bool) {
       state.show = bool
     },
+    setFacetBrands(state, brands) {
+      state.brands = brands
+    },
+    setFacetFormats(state, formats) {
+      state.formats = formats
+    },
   },
   actions: {
     async search({ commit }, query) {
@@ -29,6 +37,48 @@ export default createStore({
       })
 
       commit('setResults', solrResponse.data.response.docs)
+    },
+
+    async facetBrands({ commit }) {
+      const solrResponse = await axios.get('/solr/medications_core/select', {
+        params: {
+          q: '*:*',
+          rows: 0,
+          facet: true,
+          'facet.field': 'brand_names',
+        },
+      })
+
+      const response = solrResponse.data.facet_counts.facet_fields.brand_names
+
+      // turn array into object
+      const brands = {}
+      for (let i = 0; i < response.length; i += 2) {
+        brands[response[i]] = response[i + 1]
+      }
+
+      commit('setFacetBrands', brands)
+    },
+
+    async facetFormats({ commit }) {
+      const solrResponse = await axios.get('/solr/medications_core/select', {
+        params: {
+          q: '*:*',
+          rows: 0,
+          facet: true,
+          'facet.field': 'formats',
+        },
+      })
+
+      const response = solrResponse.data.facet_counts.facet_fields.formats
+
+      // turn array into object
+      const formats = {}
+      for (let i = 0; i < response.length; i += 2) {
+        formats[response[i]] = response[i + 1]
+      }
+
+      commit('setFacetFormats', formats)
     },
 
     clearResults({ commit }) {
@@ -48,5 +98,7 @@ export default createStore({
     query: (state) => state.query,
     results: (state) => state.results,
     show: (state) => state.show,
+    brands: (state) => state.brands,
+    formats: (state) => state.formats,
   },
 })
