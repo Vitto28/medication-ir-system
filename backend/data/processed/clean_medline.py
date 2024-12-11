@@ -7,38 +7,13 @@ import random
 
 def clean_brand_names(brand_names):
     clean_names = []
-    buffer = None  # Temporary storage for the current brand name being processed
-    status = None  # Temporary storage for the status of the brand
-
+    # for all entries, remove any non-alphanumeric characters
+    # if the entry contains the following non-alphanumeric characters, remove the entry entirely: ¶, §
     for name in brand_names:
-        name = name.strip()  # Remove leading/trailing spaces
-
-        # Check if the name is a symbol indicating status
-        if re.match(r"^[®¶§]+$", name):
-            status = name  # Store the status for the last processed brand name
+        name = re.sub(r"[^a-zA-Z0-9\s]", "", name)
+        if "¶" in name or "§" in name:
             continue
-
-        # If buffer has a previous brand, process it before moving on
-        if buffer:
-            if status not in {"¶", "§"}:  # Keep only approved brands
-                clean_names.append(buffer)
-            buffer = None  # Reset buffer for the next brand
-            status = None  # Reset status
-
-        # Add the current name to the buffer
-        buffer = name
-
-    # Append the last brand name in buffer, if valid
-    if buffer and status not in {"¶", "§"}:
-        clean_names.append(buffer)
-
-    # Remove special cases
-    remove_words = ["EN-tabs"]
-    clean_names = [name for name in clean_names if name not in remove_words]
-
-    # Remove duplicates and sort
-    clean_names = list(set(clean_names))
-    clean_names.sort()
+        clean_names.append(name)
     return clean_names
 
 
@@ -90,10 +65,19 @@ def clean_mediline(input_file, output_file):
         for entry in data:
             if "brand_names" in entry:
                 entry["brand_names"] = clean_brand_names(entry["brand_names"])
-                
+
         # Add format by choosing randomly from one of the following
         # TODO: SHould be based on the data
-        formats =  ["tablet", "capsule", "liquid", "dissolving strip", "powder", "gel", "cream", "suppository"]
+        formats = [
+            "tablet",
+            "capsule",
+            "liquid",
+            "dissolving strip",
+            "powder",
+            "gel",
+            "cream",
+            "suppository",
+        ]
         for entry in data:
             random_subset = random.sample(formats, random.randint(1, len(formats)))
             entry["formats"] = random_subset
