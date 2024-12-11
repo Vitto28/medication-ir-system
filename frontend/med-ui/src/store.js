@@ -10,6 +10,7 @@ export default createStore({
     show: false, // shows side panel
     brands: {},
     formats: {},
+    filters: '',
   },
   mutations: {
     setQuery(state, query) {
@@ -27,14 +28,27 @@ export default createStore({
     setFacetFormats(state, formats) {
       state.formats = formats
     },
+    setFilters(state, filters) {
+      state.filters = filters
+    },
   },
   actions: {
-    async search({ commit }, query) {
-      commit('setQuery', query)
+    async search({ commit }, qry) {
+      // if (query != this.state.query) {
+      //   commit('setQuery', query)
+      // }
+
+      const old_qry = qry.q
+
+      if (this.state.filters) {
+        qry.q = qry.q + ' ' + this.state.filters.filters
+      }
 
       const solrResponse = await axios.get('/solr/medications_core/select', {
-        params: query,
+        params: qry,
       })
+
+      qry.q = old_qry
 
       commit('setResults', solrResponse.data.response.docs)
     },
@@ -79,6 +93,10 @@ export default createStore({
       }
 
       commit('setFacetFormats', formats)
+    },
+
+    addFilters({ commit }, filters) {
+      commit('setFilters', filters)
     },
 
     clearResults({ commit }) {

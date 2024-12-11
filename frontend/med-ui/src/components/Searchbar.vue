@@ -26,6 +26,7 @@ export default {
     query() {
       return {
         q: this.queryString || '*:*',
+        rows: 999, // TODO: Change this
         wt: 'json',
       }
     },
