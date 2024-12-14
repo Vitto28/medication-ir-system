@@ -90,18 +90,15 @@ class WebmdSpider(scrapy.Spider):
         #interactions = response.xpath("//div[@class='interactions-container']/descendant-or-self::*[self::p or self::ul or self::li]/descendant-or-self::text()").getall()
         interactions = response.xpath("//div[contains(@class, 'interactions-container')]//p//text() | //div[contains(@class, 'interactions-container')]//ul//li//text()").getall()      
         
-        #overdose = response.xpath("//div[contains(@class, 'overdose-container')]//div[@class='monograph-content']//p[contains(@class, 'updated-para-lazy')]/text()").getall()
-        overdose = response.xpath("//div[contains(@class, 'overdose-container')]//p[contains(@class, 'updated-para-lazy')]/text()").getall()
+        overdose = response.xpath("//div[@id='overdose-container']//h3[contains(text(), 'What should I do if I accidentally')]/following-sibling::p[1]/text()").getall()
         if not overdose:
-            overdose = response.xpath("//div[@id='overdose-container']//h3[contains(text(), 'What should I do if I accidentally')]/following-sibling::p[1]/text()").getall()
-                                  
-        missdose = response.xpath("//div[@class='overdose-container']//div[contains(@class, 'info-headline')][contains(., 'Missed Dose')]/following-sibling::div/p/text()").getall()
+            overdose = response.xpath("//div[@id='overdose-container']//div[@class='monograph-content'][not(ancestor::div[contains(@class, 'info-section')])]/p/text()").getall()
+            
+        missdose = response.xpath("//div[@id='overdose-container']//h3[contains(text(), 'What should I do if I miss a dose')]/following-sibling::p[1]/text()").getall()
         if not missdose:
-            missdose = response.xpath("//div[@id='overdose-container']//h3[contains(text(), 'What should I do if I miss a dose')]/following-sibling::p[1]/text()").getall()
-        
+            missdose = response.xpath("//div[@id='overdose-container']//div[contains(@class, 'monograph-content info-section')]//div[contains(@class, 'headline') and contains(., 'Missed Dose')]/following-sibling::div/p/text()").getall()
+                
         storage = response.xpath("//div[@id='overdose-container']//div[contains(@class, 'monograph-content info-section')]//div[contains(@class, 'headline') and contains(., 'Storage')]/following-sibling::div/p/text()").getall()
-        
-        
         
         yield {
             "drug_name": drug_name,

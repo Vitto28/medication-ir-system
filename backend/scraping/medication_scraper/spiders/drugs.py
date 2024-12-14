@@ -58,7 +58,7 @@ class DrugsSpider(scrapy.Spider):
             'drug_class': drug_class,
             'brand_names': brand_names,
             'dosage_form': dosage_form,
-            """ 'prescription': prescription,
+            'prescription': prescription,
             'warnings': warnings,
             'directions': directions,
             'dosage': dosage,
@@ -66,6 +66,6 @@ class DrugsSpider(scrapy.Spider):
             'overdose': overdose,
             'what_to_avoid': what_to_avoid,
             'side_effects': side_effects,
-            'interactions': interactions """
+            'interactions': interactions,
         }
 
