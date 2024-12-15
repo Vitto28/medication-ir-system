@@ -19,123 +19,177 @@
           </template>
         </v-data-table>
       </div>
-      <v-expand-x-transition>
-        <v-card
-          v-if="results.length > 0"
-          v-show="showPanel"
-          id="info"
-          class="mx-auto elevation-4 ml-6"
-        >
-          <div class="d-flex justify-space-between">
-            <v-card-title class="text-h4 panel_title">{{ selectedResult.name }}</v-card-title>
-            <v-btn
-              size="x-small"
-              class="mr-2 mt-2 bg-success"
-              icon
-              @click="$store.dispatch('hidePanel')"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </div>
-          <!-- TODO: Move to its own component -->
-          <v-card-text class="panel pt-0">
-            <div>
-              <!-- Brand names -->
-              <div>
-                <p class="font-weight-bold">Brand names</p>
-                <!-- if brand names array is empty, do  -->
-                <p class="mb-5" v-if="selectedResult.brand_names == null">
-                  No brand names available.
-                </p>
-                <div v-else>
-                  <v-chip
-                    v-for="format in selectedResult.brand_names"
-                    :key="format"
-                    class="mr-2 mb-5"
-                    color="secondary"
-                    label
-                  >
-                    {{ format }}
-                  </v-chip>
-                </div>
-              </div>
 
-              <!-- Class -->
-              <div class="d-flex">
-                <p class="font-weight-bold mr-1 mb-4">Class:</p>
-                <p>No class available</p>
-              </div>
+      <!-- Popup panel with medications info -->
+      <v-dialog max-width="1200">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn
+            id="open_btn"
+            v-bind="activatorProps"
+            color="surface-variant"
+            text="Open Dialog"
+            variant="flat"
+            transition="dialog-bottom-transition"
+          ></v-btn>
+        </template>
 
-              <!-- Formats -->
-              <p>Can be administered via</p>
-              <p class="text-subtitle-2">
-                (Note: This is placeholder information, may not match what's given below)
-              </p>
-
-              <v-chip
-                v-for="format in selectedResult.formats"
-                :key="format"
-                class="mr-2 mb-2"
-                color="secondary"
-                label
+        <template v-slot:default="{ isActive }">
+          <v-card
+            v-if="results.length > 0"
+            v-show="showPanel"
+            id="info"
+            class="mx-auto elevation-4 ml-6"
+          >
+            <div class="d-flex justify-space-between">
+              <v-card-title class="text-h4 panel_title">{{ selectedResult.name }}</v-card-title>
+              <v-btn
+                size="x-small"
+                class="mr-2 mt-2 bg-success"
+                icon
+                @click="isActive.value = false"
               >
-                {{ format }}
-              </v-chip>
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
             </div>
+            <!-- TODO: Move to its own component -->
+            <v-card-text class="panel pt-0">
+              <div>
+                <!-- Brand names -->
+                <div>
+                  <p class="font-weight-bold">Brand names</p>
+                  <!-- if brand names array is empty, do  -->
+                  <p class="mb-5" v-if="selectedResult.brand_names == null">
+                    No brand names available.
+                  </p>
+                  <div v-else>
+                    <v-chip
+                      v-for="format in selectedResult.brand_names"
+                      :key="format"
+                      class="mr-2 mb-5"
+                      color="secondary"
+                      label
+                    >
+                      {{ format }}
+                    </v-chip>
+                  </div>
+                </div>
 
-            <!-- Description -->
-            <p class="mb-8 mt-4">{{ selectedResult.prescription }}</p>
+                <!-- Class -->
+                <div class="d-flex">
+                  <p class="font-weight-bold mr-1 mb-4">Class:</p>
+                  <p>No class available</p>
+                </div>
 
-            <!-- How to take -->
-            <div class="mb-4">
-              <p class="text-h5">How to take</p>
-              <p>{{ selectedResult.dosage }}</p>
-            </div>
+                <!-- Formats -->
+                <p>Can be administered via</p>
+                <p class="text-subtitle-2">
+                  (Note: This is placeholder information, may not match what's given below)
+                </p>
 
-            <!-- Side effects -->
-            <div class="mb-4">
-              <p class="text-h5">Side effects</p>
-              <p>Some of the side effects of taking {{ selectedResult.name }} include:</p>
-              <ul class="ml-4 mt-1">
-                <li v-for="effect in selectedResult.side_effects" :key="effect">
-                  {{ effect }}
-                </li>
-              </ul>
-            </div>
+                <v-chip
+                  v-for="format in selectedResult.formats"
+                  :key="format"
+                  class="mr-2 mb-2"
+                  color="secondary"
+                  label
+                >
+                  {{ format }}
+                </v-chip>
+              </div>
 
-            <!-- Storing -->
-            <div class="mb-4">
-              <p class="text-h5">How to store</p>
-              <p v-if="selectedResult.storage">{{ selectedResult.storage }}</p>
-              <p v-else>There is no information available on how to store this medication.</p>
-            </div>
+              <!-- Description -->
+              <div class="mt-4">
+                <p class="text-h5">What it does</p>
+                <p class="mb-8">{{ selectedResult.prescription }}</p>
+              </div>
 
-            <!-- Missed dose -->
-            <div class="mb-4">
-              <p class="text-h5">What if I miss a dose?</p>
-              <p v-if="selectedResult.missdose">{{ selectedResult.missdose }}</p>
-              <p v-else>There is no information available on missing a dose.</p>
-            </div>
+              <!-- How to take -->
+              <div class="mb-4">
+                <p class="text-h5">How to take</p>
+                <p>{{ selectedResult.dosage }}</p>
+              </div>
 
-            <!-- Overdose -->
-            <div class="mb-4">
-              <p class="text-h5">Overdosing</p>
-              <p v-if="selectedResult.overdose">{{ selectedResult.overdose }}</p>
-              <p v-else>There is no information available on overdosing.</p>
-            </div>
+              <!-- Side effects -->
+              <div class="mb-4">
+                <p class="text-h5">Side effects</p>
+                <p>Some of the side effects of taking {{ selectedResult.name }} include:</p>
+                <ul class="ml-4 mt-1">
+                  <li v-for="effect in selectedResult.side_effects" :key="effect">
+                    {{ effect }}
+                  </li>
+                </ul>
+              </div>
 
-            <!-- Precautions -->
-            <div>
-              <p class="text-h5">Precautions</p>
-              <ul class="ml-4">
-                <li v-for="precaution in selectedResult.precautions" :key="precaution">
-                  {{ precaution }}
-                </li>
-              </ul>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-expand-x-transition>
+              <!-- Storing -->
+              <div class="mb-4">
+                <p class="text-h5">How to store</p>
+                <p v-if="selectedResult.storage">{{ selectedResult.storage }}</p>
+                <p v-else>There is no information available on how to store this medication.</p>
+              </div>
+
+              <!-- Missed dose -->
+              <div class="mb-4">
+                <p class="text-h5">What if I miss a dose?</p>
+                <p v-if="selectedResult.missdose">{{ selectedResult.missdose }}</p>
+                <p v-else>There is no information available on missing a dose.</p>
+              </div>
+
+              <!-- Overdose -->
+              <div class="mb-4">
+                <p class="text-h5">Overdosing</p>
+                <p v-if="selectedResult.overdose">{{ selectedResult.overdose }}</p>
+                <p v-else>There is no information available on overdosing.</p>
+              </div>
+
+              <!-- Precautions -->
+              <div>
+                <p class="text-h5">Precautions</p>
+                <ul class="ml-4">
+                  <li v-for="precaution in selectedResult.precautions" :key="precaution">
+                    {{ precaution }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Related drugs -->
+              <!-- Grid with three columns -->
+              <!-- v-for card with title and short description -->
+              <div class="mt-8">
+                <p class="text-h5 mb-4">Related medications</p>
+                <v-row>
+                  <!-- v-for relatedDrugs array -->
+                  <v-col cols="4" v-for="drug in relatedDrugs" :key="drug.id">
+                    <v-card elevation="4">
+                      <v-card-title>{{ drug.name }}</v-card-title>
+                      <v-card-text class="textwrap">{{ drug.prescription }}</v-card-text>
+                    </v-card>
+                  </v-col>
+                  <!-- <v-col cols="4">
+                    <v-card>
+                      <v-card-title>Drug 1</v-card-title>
+                      <v-card-text>Short description</v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-card>
+                      <v-card-title>Drug 2</v-card-title>
+                      <v-card-text>Short description</v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-card>
+                      <v-card-title>Drug 3</v-card-title>
+                      <v-card-text>Short description</v-card-text>
+                    </v-card>
+                  </v-col> -->
+                </v-row>
+              </div>
+            </v-card-text>
+          </v-card>
+          <!-- end card -->
+        </template>
+      </v-dialog>
+      <!-- End popup -->
     </div>
   </div>
 </template>
@@ -144,6 +198,15 @@
 export default {
   data: () => ({
     selectedId: null,
+    relatedDrugs: [
+      {
+        id: 1,
+        name: 'Drug 1',
+        prescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio.',
+      },
+      { id: 2, name: 'Drug 2', prescription: 'Short description' },
+      { id: 3, name: 'Drug 3', prescription: 'Short description' },
+    ],
     // available headers: name, description, side effects, dosage, precautions
     headers: [
       { title: 'Name', value: 'name' },
@@ -173,6 +236,8 @@ export default {
   methods: {
     handleRowClick(id) {
       this.selectedId = id
+      // grab button with id 'open_btn' and click it
+      document.getElementById('open_btn').click()
       this.$store.dispatch('showPanel')
     },
   },
@@ -214,5 +279,9 @@ export default {
 .panel_title {
   max-width: 550px;
   white-space: wrap;
+}
+/* dont display item with id open_btn */
+#open_btn {
+  display: none;
 }
 </style>
