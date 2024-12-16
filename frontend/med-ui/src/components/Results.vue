@@ -44,7 +44,7 @@
               <v-card-title class="text-h4 panel_title">{{ selectedResult.name }}</v-card-title>
               <v-btn
                 size="x-small"
-                class="mr-2 mt-2 bg-success"
+                class="mr-2 mt-2 bg-secondary"
                 icon
                 @click="isActive.value = false"
               >
@@ -158,10 +158,10 @@
                 <p class="text-h5 mb-4">Related medications</p>
                 <v-row>
                   <!-- v-for relatedDrugs array -->
-                  <v-col cols="4" v-for="drug in relatedDrugs" :key="drug.id">
+                  <v-col cols="4" v-for="drug in selectedRelatedDrugs" :key="drug.id">
                     <v-card elevation="4">
                       <v-card-title>{{ drug.name }}</v-card-title>
-                      <v-card-text class="textwrap">{{ drug.prescription }}</v-card-text>
+                      <v-card-text class="textwrap">{{ drug.description }}</v-card-text>
                     </v-card>
                   </v-col>
                   <!-- <v-col cols="4">
@@ -198,14 +198,78 @@
 export default {
   data: () => ({
     selectedId: null,
+    // TODO: Remove
+    selectedRelatedDrugs: [],
     relatedDrugs: [
       {
         id: 1,
-        name: 'Drug 1',
-        prescription: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec odio.',
+        name: 'Paracetamol',
+        description: 'Paracetamol is used to treat mild to moderate pain and reduce fever.',
       },
-      { id: 2, name: 'Drug 2', prescription: 'Short description' },
-      { id: 3, name: 'Drug 3', prescription: 'Short description' },
+      {
+        id: 2,
+        name: 'Ibuprofen',
+        description:
+          'Ibuprofen is a nonsteroidal anti-inflammatory drug (NSAID) for pain, inflammation, and fever.',
+      },
+      {
+        id: 3,
+        name: 'Amoxicillin',
+        description: 'Amoxicillin is an antibiotic used to treat various bacterial infections.',
+      },
+      {
+        id: 4,
+        name: 'Metformin',
+        description:
+          'Metformin is used to manage type 2 diabetes by improving blood sugar control.',
+      },
+      {
+        id: 5,
+        name: 'Atorvastatin',
+        description:
+          'Atorvastatin is used to lower cholesterol and reduce the risk of heart disease.',
+      },
+      {
+        id: 6,
+        name: 'Omeprazole',
+        description:
+          'Omeprazole is used to treat acid reflux and ulcers by reducing stomach acid production.',
+      },
+      {
+        id: 7,
+        name: 'Levothyroxine',
+        description: 'Levothyroxine is used to treat hypothyroidism by replacing thyroid hormone.',
+      },
+      {
+        id: 8,
+        name: 'Cetirizine',
+        description:
+          'Cetirizine is an antihistamine used to relieve allergy symptoms such as runny nose and itching.',
+      },
+      {
+        id: 9,
+        name: 'Clopidogrel',
+        description:
+          'Clopidogrel is an antiplatelet medication used to prevent blood clots in heart disease and stroke.',
+      },
+      {
+        id: 10,
+        name: 'Amlodipine',
+        description:
+          'Amlodipine is used to treat high blood pressure and angina by relaxing blood vessels.',
+      },
+      {
+        id: 11,
+        name: 'Alprazolam',
+        description:
+          'Alprazolam is a benzodiazepine used to treat anxiety and panic disorders by calming the brain.',
+      },
+      {
+        id: 12,
+        name: 'Sertraline',
+        description:
+          'Sertraline is an antidepressant used to treat depression, anxiety, and obsessive-compulsive disorder.',
+      },
     ],
     // available headers: name, description, side effects, dosage, precautions
     headers: [
@@ -237,6 +301,8 @@ export default {
     handleRowClick(id) {
       this.selectedId = id
       // grab button with id 'open_btn' and click it
+      // choose three random related drugs and set them to selectedRelatedDrugs
+      this.selectedRelatedDrugs = this.relatedDrugs.sort(() => Math.random() - 0.5).slice(0, 3)
       document.getElementById('open_btn').click()
       this.$store.dispatch('showPanel')
     },

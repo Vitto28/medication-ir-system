@@ -17,8 +17,49 @@
       <!-- Advanced search -->
       <v-col class="pt-0" cols="12">
         <div class="d-flex justify-space-between">
+          <!-- dialog -->
+          <v-dialog v-if="!hintSeen" activator="#activator-target" max-width="340">
+            <template v-slot:default="{ isActive }">
+              <v-card prepend-icon="mdi-help-circle-outline" title="How to use filters">
+                <v-card-text>
+                  <p>
+                    Selecting multiple filters applies an AND logic, meaning only items matching all
+                    selected formats will be shown. 
+                    <br />
+                    <br />
+                    There are three states for each filter:
+                    <br />
+                    
+                    <!-- list -->
+
+                    <ul class="ml-4">
+                      <li>
+                        Click on an item once to <b>include</b> it in your search (results containing that term are guaranteed to show up in the results).
+                      </li>
+                      <li>
+                        Click again to <b>exclude</b> it (results with that term will <b>not</b> appear in the results).
+                      </li>
+                      <li>
+                        Click a third time if you want no filter to apply for that term.
+                      </li>
+                    </ul>
+                  </p>
+                </v-card-text>
+                <template v-slot:actions>
+                  <v-btn
+                    class="ml-auto"
+                    text="got it"
+                    @click="(isActive.value = false), (hintSeen = true)"
+                  ></v-btn>
+                </template>
+              </v-card>
+            </template>
+          </v-dialog>
+          <!-- sep -->
+           <!-- TODO: add help button -->
           <v-switch
             v-model="advanced"
+            :id="hintSeen ? '' : 'activator-target'"
             color="secondary"
             label="Advanced search"
             :hint="
@@ -119,6 +160,7 @@
 export default {
   data: () => ({
     advanced: false,
+    hintSeen: false,
     formatMenuOpen: false,
     formats: {},
     brandsMenuOpen: false,
