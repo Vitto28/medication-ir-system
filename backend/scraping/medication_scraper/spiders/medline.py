@@ -72,7 +72,6 @@ class MedlinePlusSpider(scrapy.Spider):
         storage = response.xpath(
             "//div[@id='storage-conditions']/descendant-or-self::*[self::h3 or self::p or self::ul or self::li]/descendant-or-self::text()"
         ).getall()
-        # brand_names = response.xpath("//div[@id='brand-name-1']/descendant-or-self::*[self::ul or self::li]/descendant-or-self::text()").getall()
         brand_names = response.xpath('//div[@id="section-brandname-1"]//li')
         result = []
         for li in brand_names:
