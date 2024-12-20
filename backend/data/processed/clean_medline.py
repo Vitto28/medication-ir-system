@@ -1,8 +1,9 @@
 import json
 import argparse
-import hashlib
 import re
 import random
+
+from utils import generate_id
 
 
 def clean_brand_names(brand_names):
@@ -17,18 +18,8 @@ def clean_brand_names(brand_names):
     return clean_names
 
 
-# Generates an id based on the drug name
-# TODO: Implement a more robust id generation algorithm (multiple files may have the same drug name, resulting in the same id)
-def generate_id(data):
-    m = hashlib.md5()
-    # use the drug name to generate the id
-    m.update(data["name"].encode())
-    my_str = str(int(m.hexdigest(), 16))[0:12]
-    return my_str
-
-
 # Main filtering function
-def clean_mediline(input_file, output_file):
+def clean_medline(input_file, output_file):
     try:
         # Load the JSON data from the input file
         with open(input_file, "r") as infile:
@@ -105,4 +96,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    clean_mediline(args.input_file, args.output_file)
+    clean_medline(args.input_file, args.output_file)

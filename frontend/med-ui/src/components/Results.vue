@@ -41,7 +41,7 @@
           <template v-slot:body="{ items }">
             <tr class="row" v-for="item in items" :key="item.id" @click="handleRowClick(item.id)">
               <td>{{ item.name }}</td>
-              <td>{{ 'None' }}</td>
+              <td>{{ item.classes && item.classes.length > 0 ? item.classes.join(', ') : 'None' }}</td>
               <td class="description textwrap">{{ item.prescription }}</td>
               <td class="formats textwrap">{{ item.formats.join(', ') }}</td>
             </tr>

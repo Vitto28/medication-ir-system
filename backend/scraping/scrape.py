@@ -20,7 +20,7 @@ def generate_id():
 
 
 # spiders = ["medlineplus", "webmd", "drugs"]
-spiders = ["webmd", "drugs"]
+spiders = ["drugs"]
 output_base_path = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
 
 

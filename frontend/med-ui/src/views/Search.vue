@@ -108,7 +108,6 @@
           <!-- end brands -->
 
           <!-- Classes -->
-           <!-- TODO: Might be only one? -->
           <div class="d-flex mb-2 mt-4 align-center">
             <h4 class="text-h6 font-weight-bold">Classes</h4>
             <!-- clear all -->

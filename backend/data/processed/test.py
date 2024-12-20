@@ -1,46 +1,16 @@
-import scrapy
+import requests
 from lxml import html
 
 
-class DrugsSpider(scrapy.Spider):
-    name = "drugs"
-    start_urls = ["https://www.drugs.com/drug_information.html"]
-    item_count = 0  # Add a counter to keep track of scraped items
-    index_count = 0
+class DrugParser:
+    def parse_drug_details(self, url):
+        # Make a request to the provided URL
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception(
+                f"Failed to fetch the page. Status code: {response.status_code}"
+            )
 
-    def parse(self, response):
-        print("Extracting links A-Z")
-        # Step 2: Extract links for each letter (A-Z)
-        letter_links = response.css("nav.ddc-paging li a::attr(href)").extract()
-        for link in letter_links:
-            # if self.index_count >= 5:
-                # break
-            # self.index_count += 1
-            print(link)
-            yield response.follow(link, callback=self.parse_drug_list)
-
-    def parse_drug_list(self, response):
-        print("Extracting individual links")
-        # Step 3: Extract individual drug links
-        drug_links = response.xpath(
-            "//ul[@class='ddc-list-column-2']/li/a/@href"
-        ).extract()
-
-        # Step 4: Iterate over each drug link and follow it to get drug details
-        for link in drug_links:
-            print(link)
-            # if self.item_count >= 5:
-                # break  # Stop if we have already scraped the desired number of items
-            # self.item_count += 1
-            yield response.follow(link, callback=self.parse_drug_details)
-
-    def parse_drug_details(self, response):
-        # Increment the item count
-        # if self.item_count >= 10:
-            # return  # Stop processing if the limit has been reached
-
-        # self.item_count += 1
-        
         # Parse the HTML content
         tree = html.fromstring(response.text)
 
@@ -98,10 +68,21 @@ class DrugsSpider(scrapy.Spider):
             [drug_class.strip() for drug_class in drug_classes] if drug_classes else []
         )
 
-        # Return results
-        yield {
+        # Return as dictionary
+        return {
             "generic_name": generic_name,
             "brand_names": brand_names,
             "dosage_forms": formats,
             "drug_classes": drug_classes,
         }
+
+
+# Example usage
+if __name__ == "__main__":
+    parser = DrugParser()
+    url = "https://www.drugs.com/baclofen.html"
+    try:
+        drug_details = parser.parse_drug_details(url)
+        print(drug_details)
+    except Exception as e:
+        print(f"Error: {e}")
