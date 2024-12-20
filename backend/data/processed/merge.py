@@ -15,11 +15,13 @@ def generate_id():
     unique_id = current_time.strftime("%Y%m%d%H%M%S")
     return unique_id
 
+output_path = os.path.join(os.path.dirname(__file__))
+
 # Load JSON data from files
-with open('file1.json', 'r') as f:
+with open(os.path.join(output_path, 'medline.json'), 'r') as f:
     file1 = json.load(f)
 
-with open('file2.json', 'r') as f:
+with open(os.path.join(output_path, 'drugs.json'), 'r') as f:
     file2 = json.load(f)
 
 # Create a mapping for fast lookup in file1
@@ -33,11 +35,9 @@ for obj2 in file2:
         file1_map[name]['brand_names'] = list(set(file1_map[name].get('brand_names', []) + obj2.get('brand_names', [])))
         file1_map[name].setdefault('formats', []).extend(obj2.get('formats', []))
         file1_map[name].setdefault('classes', []).extend(obj2.get('classes', []))
-    else:
-        # Add new object to file1 if it doesn't exist
-        file1.append(obj2)
         
-output_path = os.path.join(os.path.dirname(__file__))
+        
+
 output_file = f"{'merged'}_{generate_id()}.json"
 
 # Output the extended file1

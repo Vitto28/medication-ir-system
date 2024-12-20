@@ -57,22 +57,6 @@ def clean_medline(input_file, output_file):
             if "brand_names" in entry:
                 entry["brand_names"] = clean_brand_names(entry["brand_names"])
 
-        # Add format by choosing randomly from one of the following
-        # TODO: SHould be based on the data
-        formats = [
-            "tablet",
-            "capsule",
-            "liquid",
-            "dissolving strip",
-            "powder",
-            "gel",
-            "cream",
-            "suppository",
-        ]
-        for entry in data:
-            random_subset = random.sample(formats, random.randint(1, len(formats)))
-            entry["formats"] = random_subset
-
         # Add id to each entry
         for entry in data:
             entry["id"] = generate_id(entry)

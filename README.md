@@ -24,8 +24,9 @@ From the frontend directory, 'frontend/med-ui', run the corresponding Vue comman
 ```npm run serve```
 
 ### Scraper script
-TODO
+If you wish to rerun the scraping scripts, we have conveniently grouped all of them in the scrape.py script, located at /backend/scraping. Navigate to this directory and run<br/><br/>
+```python scrape.py```
 
 ### Indexing documents
 To try out the search functionality, first we need to index some documents into Solr (ensure the server is running). <br/><br/>
-```bin/solr post -c medications_core path/to/document/sample.json```
+```bin/solr post -c medications_core path/to/document/filename.json```
