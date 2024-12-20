@@ -72,7 +72,7 @@
        The example below can be used to load a Solr Module along
        with their external dependencies.
     -->
-    <!-- <lib dir="${solr.install.dir:../../../..}/modules/ltr/lib" regex=".*\.jar" /> -->
+  <!-- <lib dir="${solr.install.dir:../../../..}/modules/ltr/lib" regex=".*\.jar" /> -->
 
   <!-- an exact 'path' can be used instead of a 'dir' to specify a
        specific jar file.  This will cause a serious error to be logged
@@ -105,8 +105,7 @@
 
        solr.RAMDirectoryFactory is memory based and not persistent.
     -->
-  <directoryFactory name="DirectoryFactory"
-                    class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/>
+  <directoryFactory name="DirectoryFactory" class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}"/>
 
   <!-- The CodecFactory for defining the format of the inverted index.
        The default implementation is SchemaCodecFactory, which is the official Lucene
@@ -400,9 +399,7 @@
                       to occupy. Note that when this option is specified, the size
                       and initialSize parameters are ignored.
       -->
-    <filterCache size="512"
-                 initialSize="512"
-                 autowarmCount="0"/>
+    <filterCache size="512" initialSize="512" autowarmCount="0"/>
 
     <!-- Query Result Cache
 
@@ -412,9 +409,7 @@
             maxRamMB - the maximum amount of RAM (in MB) that this cache is allowed
                        to occupy
       -->
-    <queryResultCache size="512"
-                      initialSize="512"
-                      autowarmCount="0"/>
+    <queryResultCache size="512" initialSize="512" autowarmCount="0"/>
 
     <!-- Document Cache
 
@@ -422,17 +417,10 @@
          document).  Since Lucene internal document ids are transient,
          this cache will not be autowarmed.
       -->
-    <documentCache size="512"
-                   initialSize="512"
-                   autowarmCount="0"/>
+    <documentCache size="512" initialSize="512" autowarmCount="0"/>
 
     <!-- custom cache currently used by block join -->
-    <cache name="perSegFilter"
-           class="solr.CaffeineCache"
-           size="10"
-           initialSize="0"
-           autowarmCount="10"
-           regenerator="solr.NoOpRegenerator" />
+    <cache name="perSegFilter" class="solr.CaffeineCache" size="10" initialSize="0" autowarmCount="10" regenerator="solr.NoOpRegenerator" />
 
     <!-- Field Value Cache
 
@@ -441,9 +429,7 @@
          even if not configured here.
       -->
     <!--
-       <fieldValueCache size="512"
-                        autowarmCount="128"
-                        />
+       <fieldValueCache size="512" autowarmCount="128" />
       -->
 
     <!-- Custom Cache
@@ -456,13 +442,7 @@
          if autowarming is desired.
       -->
     <!--
-       <cache name="myUserCache"
-              class="solr.CaffeineCache"
-              size="4096"
-              initialSize="1024"
-              autowarmCount="1024"
-              regenerator="com.mycompany.MyRegenerator"
-              />
+       <cache name="myUserCache" class="solr.CaffeineCache" size="4096" initialSize="1024" autowarmCount="1024" regenerator="com.mycompany.MyRegenerator" />
       -->
 
 
@@ -585,9 +565,7 @@
          Solr components, but may be useful when developing custom
          plugins.
 
-    <requestParsers multipartUploadLimitInKB="-1"
-                    formdataUploadLimitInKB="-1"
-                    addHttpRequestToContext="false"/>
+    <requestParsers multipartUploadLimitInKB="-1" formdataUploadLimitInKB="-1" addHttpRequestToContext="false"/>
       -->
 
     <!-- HTTP Caching
@@ -604,11 +582,10 @@
 
          By default, no Cache-Control header is generated.
 
-         You can use the <cacheControl> option even if you have set
-         never304="true"
+         You can use the <cacheControl> option even if you have set never304="true"
       -->
     <!--
-       <httpCaching never304="true" >
+       <httpCaching never304="true">
          <cacheControl>max-age=30, public</cacheControl>
        </httpCaching>
       -->
@@ -627,9 +604,7 @@
          requests) will all be relative to when the current Searcher
          was opened.  You can change it to lastModFrom="dirLastMod" if
          you want the value to exactly correspond to when the physical
-         index was last modified.
-
-         etagSeed="..." is an option you can change to force the ETag
+         index was last modified. etagSeed="..." is an option you can change to force the ETag
          header (and validation against If-None-Match requests) to be
          different even if the index has not changed (ie: when making
          significant changes to your config file)
@@ -638,8 +613,7 @@
          the never304="true" option)
       -->
     <!--
-       <httpCaching lastModifiedFrom="openTime"
-                    etagSeed="Solr">
+       <httpCaching lastModifiedFrom="openTime" etagSeed="Solr">
          <cacheControl>max-age=30, public</cacheControl>
        </httpCaching>
       -->
@@ -667,6 +641,11 @@
       <str name="echoParams">explicit</str>
       <int name="rows">10</int>
     </lst>
+  </requestHandler>
+
+  <!-- More like this -->
+  <requestHandler name="/mlt" class="solr.MoreLikeThisHandler">
+    <str name="mlt.fl">prescription</str>
   </requestHandler>
 
   <!-- A request handler that returns indented JSON by default -->
@@ -782,9 +761,7 @@
     <highlighting>
       <!-- Configure the standard fragmenter -->
       <!-- This could most likely be commented out in the "default" case -->
-      <fragmenter name="gap"
-                  default="true"
-                  class="solr.highlight.GapFragmenter">
+      <fragmenter name="gap" default="true" class="solr.highlight.GapFragmenter">
         <lst name="defaults">
           <int name="hl.fragsize">100</int>
         </lst>
@@ -793,8 +770,7 @@
       <!-- A regular-expression-based fragmenter
            (for sentence extraction)
         -->
-      <fragmenter name="regex"
-                  class="solr.highlight.RegexFragmenter">
+      <fragmenter name="regex" class="solr.highlight.RegexFragmenter">
         <lst name="defaults">
           <!-- slightly smaller fragsizes work better because of slop -->
           <int name="hl.fragsize">70</int>
@@ -806,9 +782,7 @@
       </fragmenter>
 
       <!-- Configure the standard formatter -->
-      <formatter name="html"
-                 default="true"
-                 class="solr.highlight.HtmlFormatter">
+      <formatter name="html" default="true" class="solr.highlight.HtmlFormatter">
         <lst name="defaults">
           <str name="hl.simple.pre"><![CDATA[<em>]]></str>
           <str name="hl.simple.post"><![CDATA[</em>]]></str>
@@ -816,26 +790,19 @@
       </formatter>
 
       <!-- Configure the standard encoder -->
-      <encoder name="html"
-               class="solr.highlight.HtmlEncoder" />
+      <encoder name="html" class="solr.highlight.HtmlEncoder" />
 
       <!-- Configure the standard fragListBuilder -->
-      <fragListBuilder name="simple"
-                       class="solr.highlight.SimpleFragListBuilder"/>
+      <fragListBuilder name="simple" class="solr.highlight.SimpleFragListBuilder"/>
 
       <!-- Configure the single fragListBuilder -->
-      <fragListBuilder name="single"
-                       class="solr.highlight.SingleFragListBuilder"/>
+      <fragListBuilder name="single" class="solr.highlight.SingleFragListBuilder"/>
 
       <!-- Configure the weighted fragListBuilder -->
-      <fragListBuilder name="weighted"
-                       default="true"
-                       class="solr.highlight.WeightedFragListBuilder"/>
+      <fragListBuilder name="weighted" default="true" class="solr.highlight.WeightedFragListBuilder"/>
 
       <!-- default tag FragmentsBuilder -->
-      <fragmentsBuilder name="default"
-                        default="true"
-                        class="solr.highlight.ScoreOrderFragmentsBuilder">
+      <fragmentsBuilder name="default" default="true" class="solr.highlight.ScoreOrderFragmentsBuilder">
         <!--
         <lst name="defaults">
           <str name="hl.multiValuedSeparatorChar">/</str>
@@ -844,8 +811,7 @@
       </fragmentsBuilder>
 
       <!-- multi-colored tag FragmentsBuilder -->
-      <fragmentsBuilder name="colored"
-                        class="solr.highlight.ScoreOrderFragmentsBuilder">
+      <fragmentsBuilder name="colored" class="solr.highlight.ScoreOrderFragmentsBuilder">
         <lst name="defaults">
           <str name="hl.tag.pre"><![CDATA[
                <b style="background:yellow">,<b style="background:lawgreen">,
@@ -857,17 +823,14 @@
         </lst>
       </fragmentsBuilder>
 
-      <boundaryScanner name="default"
-                       default="true"
-                       class="solr.highlight.SimpleBoundaryScanner">
+      <boundaryScanner name="default" default="true" class="solr.highlight.SimpleBoundaryScanner">
         <lst name="defaults">
           <str name="hl.bs.maxScan">10</str>
           <str name="hl.bs.chars">.,!? &#9;&#10;&#13;</str>
         </lst>
       </boundaryScanner>
 
-      <boundaryScanner name="breakIterator"
-                       class="solr.highlight.BreakIteratorBoundaryScanner">
+      <boundaryScanner name="breakIterator" class="solr.highlight.BreakIteratorBoundaryScanner">
         <lst name="defaults">
           <!-- type should be one of CHARACTER, WORD(default), LINE and SENTENCE -->
           <str name="hl.bs.type">WORD</str>
@@ -956,11 +919,10 @@
       <str name="fieldType">pdoubles</str>
     </lst>
   </updateProcessor>
-  
+
 
   <!-- The update.autoCreateFields property can be turned to false to disable schemaless mode -->
-  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:true}"
-           processor="uuid,remove-blank,field-name-mutating,max-fields,parse-boolean,parse-long,parse-double,parse-date,add-schema-fields">
+  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:true}" processor="uuid,remove-blank,field-name-mutating,max-fields,parse-boolean,parse-long,parse-double,parse-date,add-schema-fields">
     <processor class="solr.LogUpdateProcessorFactory"/>
     <processor class="solr.DistributedUpdateProcessorFactory"/>
     <processor class="solr.RunUpdateProcessorFactory"/>
@@ -1003,9 +965,7 @@
        overridden...
     -->
   <!--
-     <queryResponseWriter name="xml"
-                          default="true"
-                          class="solr.XMLResponseWriter" />
+     <queryResponseWriter name="xml" default="true" class="solr.XMLResponseWriter" />
      <queryResponseWriter name="json" class="solr.JSONResponseWriter"/>
      <queryResponseWriter name="python" class="solr.PythonResponseWriter"/>
      <queryResponseWriter name="ruby" class="solr.RubyResponseWriter"/>
@@ -1047,8 +1007,7 @@
     -->
   <!-- example of registering a custom function parser  -->
   <!--
-     <valueSourceParser name="myfunc"
-                        class="com.mycompany.MyValueSourceParser" />
+     <valueSourceParser name="myfunc" class="com.mycompany.MyValueSourceParser" />
     -->
 
 
@@ -1057,17 +1016,17 @@
     -->
   <!--
      Could be something like:
-     <transformer name="db" class="com.mycompany.LoadFromDatabaseTransformer" >
+     <transformer name="db" class="com.mycompany.LoadFromDatabaseTransformer">
        <int name="connection">jdbc://....</int>
      </transformer>
 
      To add a constant value to all docs, use:
-     <transformer name="mytrans2" class="org.apache.solr.response.transform.ValueAugmenterFactory" >
+     <transformer name="mytrans2" class="org.apache.solr.response.transform.ValueAugmenterFactory">
        <int name="value">5</int>
      </transformer>
 
      If you want the user to still be able to change it with _value:something_ use this:
-     <transformer name="mytrans3" class="org.apache.solr.response.transform.ValueAugmenterFactory" >
+     <transformer name="mytrans3" class="org.apache.solr.response.transform.ValueAugmenterFactory">
        <double name="defaultValue">5</double>
      </transformer>
 

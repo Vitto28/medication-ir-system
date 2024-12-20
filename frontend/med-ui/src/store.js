@@ -34,7 +34,6 @@ export default createStore({
   actions: {
     async search({ commit }, query) {
       // TODO: change query depending on mode
-      // TODO Return only relevant info, full data only pulled when necessary
 
       const baseURL = '/solr/medications_core/select'
 
@@ -149,6 +148,24 @@ export default createStore({
       const solrResponse = await axios.get(baseURL, { params })
 
       return solrResponse.data.response.docs[0]
+    },
+
+    // use MoreLikeThis feature to find related medications
+    async getRelatedDrugs({ commit }, id) {
+      console.log('FETCHING SIMILAR ITEMS')
+      const baseURL = '/solr/medications_core/mlt'
+      const params = {
+        q: `id:${id}`,
+        'mlt.fl': 'prescription', //TODO add class?
+        'mlt.match.include': true,
+        'mlt.mindf': 0,
+        'mlt.mintf': 0,
+        rows: 3,
+      }
+
+      const solrResponse = await axios.get(baseURL, { params })
+
+      return solrResponse.data.response.docs
     },
 
     showPanel({ commit }) {
