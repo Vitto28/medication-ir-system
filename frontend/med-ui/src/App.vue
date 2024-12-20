@@ -1,10 +1,8 @@
 <script>
-import Home from './views/Home.vue'
 import Search from './views/Search.vue'
 
 const routes = {
-  '/': Home,
-  '/search': Search,
+  '/': Search,
 }
 
 export default {

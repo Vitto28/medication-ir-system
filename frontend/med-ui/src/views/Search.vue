@@ -1,5 +1,152 @@
 <template>
-  <v-container>
+
+  <v-container class="h-screen">
+    <v-row class="mt-4">
+      <h1 class="text-h2 font-weight-medium d-flex">Pharma <p class="text-secondary">Seek</p>
+      </h1>
+    </v-row>
+    <v-row id="container" justify="center">
+      <v-col>
+        <div class="d-flex align-center">
+          <!-- Search focus -->
+          <v-tabs v-model="mode">
+            <v-tab value="0" text="General Search">
+              <template v-slot:append>
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" icon="mdi-help-circle-outline"></v-icon>
+                  </template>
+                  Prioritizes results that contain query terms in the description.
+                </v-tooltip>
+              </template>
+            </v-tab>
+            <v-tab value="1" text="Prescription">
+              <template v-slot:append>
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" icon="mdi-help-circle-outline"></v-icon>
+                  </template>
+                  Limits results to those with matching prescription information.
+                </v-tooltip>
+              </template>
+            </v-tab>
+            <v-tab value="2" text="Side Effects">
+              <template v-slot:append>
+                <v-tooltip location="bottom">
+                  <template v-slot:activator="{ props }">
+                    <v-icon v-bind="props" icon="mdi-help-circle-outline"></v-icon>
+                  </template>
+                  Limits results to those whose listed side effects match the query.
+                </v-tooltip>
+              </template>
+            </v-tab>
+          </v-tabs>
+        </div>
+        <Searchbar class="pt-3" />
+        <Results class="mt-6" />
+      </v-col>
+      <v-col class="ml-10" cols="3">
+        <v-sheet elevation="4" rounded="lg" class="pa-6">
+          <h4 class="text-h5 font-weight-bold mb-4">Limit your search</h4>
+
+          <p class="mb-4">
+            To <b class="text-secondary">include</b> a term in your search, click on it
+            once. Click again to <b class="text-error">exclude</b> it. Click a third time to <b>ignore</b> it.
+            <br><br>
+            Once you
+            have selected your desired filters, click the search button <b>again</b> to re-rerun your search.
+            <br><br>
+            Keep in
+            mind
+            that filtering uses an <b>AND</b> operator, so only results that match all selected filters will be shown.
+          </p>
+          <!-- Formats -->
+          <div class="d-flex mb-2 align-center">
+            <h4 class="text-h6 font-weight-bold">Formats</h4>
+            <!-- clear all -->
+            <v-btn class="ml-2" prepend-icon="mdi-trash-can-outline" variant="text" @click="clearFilters(formats)">
+              clear all
+            </v-btn>
+          </div>
+          <!-- Formats -->
+          <v-chip class="ma-1" v-for="(format, index) in formats" :key="index" @click="toggleState(formats, index)"
+            :color="format.state === true ? 'secondary' : format.state === null ? 'error' : 'grey lighten-1'">
+            {{ format.label }}
+          </v-chip>
+
+          <!-- Brands -->
+          <div class="d-flex mb-2 mt-4 align-center">
+            <h4 class="text-h6 font-weight-bold">Brands</h4>
+            <!-- clear all -->
+            <v-btn class="ml-2" prepend-icon="mdi-trash-can-outline" variant="text" @click="clearFilters(brands)">
+              clear all
+            </v-btn>
+          </div>
+
+          <v-container fluid class="pa-0">
+            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="brands"
+              label="Type or select a brand name" variant="solo" multiple>
+              <template v-slot:item="{ item, index }">
+                <v-list-item @click.prevent="toggleState(brands, index)">
+                  <v-chip
+                    :color="item.raw.state === true ? 'secondary' : item.raw.state === null ? 'error' : 'grey lighten-1'"
+                    :text="item.raw.label" label></v-chip>
+                </v-list-item>
+              </template>
+            </v-combobox>
+            <!-- List the included AND excluded brands -->
+            <p v-if="filteredBrands.length > 0">Filtered brands are:</p>
+            <p v-else>No filtered brands selected.</p>
+            <v-container class="pa-0">
+              <v-chip class="ma-1" v-for="(brand, index) in filteredBrands" :key="index"
+                :color="brand.state === true ? 'secondary' : 'error'">{{
+                  brand.label
+                }}</v-chip>
+            </v-container>
+          </v-container>
+
+          <!-- end brands -->
+
+          <!-- Classes -->
+          <div class="d-flex mb-2 mt-4 align-center">
+            <h4 class="text-h6 font-weight-bold">Classes</h4>
+            <!-- clear all -->
+            <v-btn class="ml-2" prepend-icon="mdi-trash-can-outline" variant="text" @click="clearFilters(classes)">
+              clear all
+            </v-btn>
+          </div>
+
+          <v-container fluid class="pa-0">
+            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="classes"
+              label="Type or select a class name" variant="solo" multiple>
+              <template v-slot:item="{ item, index }">
+                <v-list-item @click.prevent="toggleState(classes, index)">
+                  <v-chip
+                    :color="item.raw.state === true ? 'secondary' : item.raw.state === null ? 'error' : 'grey lighten-1'"
+                    :text="item.raw.label" label></v-chip>
+                </v-list-item>
+              </template>
+            </v-combobox>
+            <!-- List the included AND excluded classes -->
+            <p v-if="filteredClasses.length > 0">Filtered classes are:</p>
+            <p v-else>No filtered classes selected.</p>
+            <v-container class="pa-0">
+              <v-chip class="ma-1" v-for="(clas, index) in filteredClasses" :key="index"
+                :color="clas.state === true ? 'secondary' : 'error'">{{
+                  clas.label
+                }}</v-chip>
+            </v-container>
+          </v-container>
+
+          <!-- end classes -->
+
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
+
+
+  <v-container v-if="false">
     <v-row>
       <v-col class="d-flex justify-space-between align-center" cols="12">
         <div>
@@ -14,143 +161,10 @@
       <v-col class="d-flex" cols="12">
         <Searchbar />
       </v-col>
-      <!-- Advanced search -->
-      <v-col class="pt-0" cols="12">
-        <div class="d-flex justify-space-between">
-          <!-- dialog -->
-          <v-dialog v-if="!hintSeen" activator="#activator-target" max-width="340">
-            <template v-slot:default="{ isActive }">
-              <v-card prepend-icon="mdi-help-circle-outline" title="How to use filters">
-                <v-card-text>
-                  <p>
-                    Selecting multiple filters applies an AND logic, meaning only items matching all
-                    selected formats will be shown. 
-                    <br />
-                    <br />
-                    There are three states for each filter:
-                    <br />
-                    
-                    <!-- list -->
-
-                    <ul class="ml-4">
-                      <li>
-                        Click on an item once to <b>include</b> it in your search (results containing that term are guaranteed to show up in the results).
-                      </li>
-                      <li>
-                        Click again to <b>exclude</b> it (results with that term will <b>not</b> appear in the results).
-                      </li>
-                      <li>
-                        Click a third time if you want no filter to apply for that term.
-                      </li>
-                    </ul>
-                  </p>
-                </v-card-text>
-                <template v-slot:actions>
-                  <v-btn
-                    class="ml-auto"
-                    text="got it"
-                    @click="(isActive.value = false), (hintSeen = true)"
-                  ></v-btn>
-                </template>
-              </v-card>
-            </template>
-          </v-dialog>
-          <!-- sep -->
-           <!-- TODO: add help button -->
-          <v-switch
-            v-model="advanced"
-            :id="hintSeen ? '' : 'activator-target'"
-            color="secondary"
-            label="Advanced search"
-            :hint="
-              advanced
-                ? 'Selecting multiple filters applies an AND logic, meaning only items matching all selected formats will be shown.'
-                : ''
-            "
-            :persistent-hint="advanced"
-          ></v-switch>
-          <div class="d-flex align-center" v-if="advanced">
-            <!-- Brands Menu -->
-            <div class="ml-4">
-              <!-- Dropdown Menu -->
-              <v-menu v-model="brandsMenuOpen" :close-on-content-click="false" offset-y>
-                <!-- Dropdown Button -->
-                <template v-slot:activator="{ props }">
-                  <v-btn color="secondary" v-bind="props"> Select Brands </v-btn>
-                </template>
-                <!-- Dropdown Content -->
-                <v-card>
-                  <v-list class="filter_menu">
-                    <v-list-item v-for="(item, index) in brands" :key="index">
-                      <v-checkbox
-                        :label="item.label"
-                        :indeterminate="item.state == null"
-                        @click.prevent="toggleState(brands, index)"
-                        :model-value="item.state"
-                      >
-                      </v-checkbox>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-menu>
-            </div>
-            <v-btn
-              class="ml-2"
-              color="red-darken-2"
-              icon="mdi-delete"
-              @click="brands.forEach((item) => (item.state = false))"
-            ></v-btn>
-            <!-- Formats Menu -->
-            <div class="ml-8">
-              <!-- Dropdown Menu -->
-              <v-menu v-model="formatMenuOpen" :close-on-content-click="false" offset-y>
-                <!-- Dropdown Button -->
-                <template v-slot:activator="{ props }">
-                  <v-btn color="secondary" v-bind="props"> Select Formats </v-btn>
-                </template>
-                <!-- Dropdown Content -->
-                <v-card>
-                  <v-list class="filter_menu">
-                    <v-list-item v-for="(item, index) in formats" :key="index">
-                      <v-checkbox
-                        :label="item.label"
-                        :indeterminate="item.state == null"
-                        @click.prevent="toggleState(formats, index)"
-                        :model-value="item.state"
-                      >
-                      </v-checkbox>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-menu>
-            </div>
-            <v-btn
-              class="ml-2"
-              color="red-darken-2"
-              icon="mdi-delete"
-              @click="formats.forEach((item) => (item.state = false))"
-            ></v-btn>
-            <!-- Remove ALL filters button -->
-            <v-btn
-              class="ml-8"
-              color="red-darken-2"
-              @click="
-                brands.forEach((item) => (item.state = false)),
-                  formats.forEach((item) => (item.state = false))
-              "
-              >clear all filters</v-btn
-            >
-          </div>
-        </div>
-      </v-col>
       <v-col cols="12">
         <Results />
       </v-col>
     </v-row>
-    <!-- <div id="header">
-    <a href="#/"> <v-btn>Home</v-btn></a>
-    <Searchbar />
-  </div> -->
   </v-container>
 
   <!-- <Results /> -->
@@ -159,13 +173,15 @@
 <script>
 export default {
   data: () => ({
-    advanced: false,
-    hintSeen: false,
-    formatMenuOpen: false,
-    formats: {},
-    brandsMenuOpen: false,
-    brands: {},
+    formats: [],
+    brands: [],
+    classes: [],
+    mode: 0, // focus of the search (general (0), prescription (1), side effects (2))
+    search: null,
+
   }),
+
+  // get the brands, formats, and classes from the store
   async beforeMount() {
     await this.$store.dispatch('facetBrands')
     await this.$store.dispatch('facetFormats')
@@ -188,49 +204,62 @@ export default {
     // cycles through the states of the checkboxes in the filter menus
     toggleState(collection, index) {
       const item = collection[index]
-      console.log(item)
       if (item.state === false) {
         collection[index].state = true // Indeterminate to true (+)
       } else if (item.state === true) {
-        collection[index].state = null // True to indetermiante (-)
+        collection[index].state = null // True to indeterminate (-)
       } else {
         collection[index].state = false // (ignore)
       }
     },
+
+    clearFilters(collection) {
+      for (let i = 0; i < collection.length; i++) {
+        collection[i].state = false
+      }
+    },
+
+    // handling brand filtering
+    filter(val, queryText, item) {
+      const toLowerCaseString = val =>
+        String(val != null ? val : '').toLowerCase()
+
+      const query = toLowerCaseString(queryText)
+
+      const availableOptions = this.brands.filter(x => !this.model.includes(x))
+      const hasAnyMatch = availableOptions.some(
+        x => toLowerCaseString(x.title).includes(query)
+      )
+
+      const text = toLowerCaseString(item.raw.label)
+
+      return text.includes(query)
+    },
+
+
   },
   computed: {
-    // returns a string containing the selected filters (brands and formats)
-    // the collections (brands and formats) are iterated over
-    // if collection[index].state is true, the filter is selected as '+collection[index].label'
-    // if collection[index].state is null, the filter is selected as '-collection[index].label'
-    // else, the filter is not selected
-    // if no filters are selected, returns an empty string
-    filters() {
-      // if advanced search is not enabled, return an empty string
-      if (!this.advanced) {
-        return ''
-      }
-
-      // save the selected filters in a string
-      let filters = ''
-      for (let i = 0; i < this.brands.length; i++) {
-        const str = `brand_names:"${this.brands[i].label}"` // <- note the quotes, this ensures the brand name is treated as a single term"`
-        if (this.brands[i].state === true) {
-          filters += `+${str} ` // <- note the space at the end
-        } else if (this.brands[i].state === null) {
-          filters += `-${str} `
-        }
-      }
-      for (let i = 0; i < this.formats.length; i++) {
-        const str = `formats:"${this.formats[i].label}""`
-        if (this.formats[i].state === true) {
-          filters += `+${str} `
-        } else if (this.formats[i].state === null) {
-          filters += `-${str} `
-        }
-      }
-      return filters
+    // these two computed properties are used to display the selected filters
+    filteredBrands() {
+      // returns brands that have state == true or null
+      return this.brands.filter(brand => brand.state === true || brand.state === null)
     },
+    filteredClasses() {
+      // returns classes that have state == true or null
+      return this.classes.filter(clas => clas.state === true || clas.state === null)
+    },
+    filteredFormats() {
+      return this.formats.filter(format => format.state === true || format.state === null)
+    },
+    filters() {
+      // returns the filters that are selected
+      return {
+        brand_names: this.filteredBrands,
+        class: this.filteredClasses,
+        formats: this.filteredFormats,
+      }
+    }
+
   },
   watch: {
     // when the filters change, update the search results
@@ -239,6 +268,12 @@ export default {
         this.$store.dispatch('addFilters', { filters: val })
       },
     },
+    mode: {
+      handler: function (val) {
+        this.$store.dispatch('setMode', { mode: val })
+      },
+    },
+
   },
 }
 </script>
@@ -248,23 +283,4 @@ import Searchbar from '@/components/Searchbar.vue'
 import Results from '@/components/Results.vue'
 </script>
 
-<style>
-#header {
-  display: flex;
-  justify-content: space-between;
-  align-items: top;
-  padding: 1rem;
-}
-.filter_menu {
-  max-width: 500px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.filter_menu .v-selection-control {
-  min-height: 0px;
-}
-.filter_menu .v-input__details {
-  display: none;
-}
-</style>
+<style></style>

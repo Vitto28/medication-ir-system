@@ -4,18 +4,14 @@ import axios from 'axios'
 
 export default createStore({
   state: {
-    query: {},
-    // TODO: add query params
     results: [],
     show: false, // shows side panel
     brands: {},
     formats: {},
-    filters: '',
+    filters: [],
+    mode: '0',
   },
   mutations: {
-    setQuery(state, query) {
-      state.query = query
-    },
     setResults(state, results) {
       state.results = results
     },
@@ -31,24 +27,42 @@ export default createStore({
     setFilters(state, filters) {
       state.filters = filters
     },
+    setMode(state, mode) {
+      state.mode = mode
+    },
   },
   actions: {
-    async search({ commit }, qry) {
-      // if (query != this.state.query) {
-      //   commit('setQuery', query)
-      // }
+    async search({ commit }, query) {
+      // TODO: change query depending on mode
+      // TODO Return only relevant info, full data only pulled when necessary
 
-      const old_qry = qry.q
+      const baseURL = '/solr/medications_core/select'
 
-      if (this.state.filters) {
-        qry.q = qry.q + ' ' + this.state.filters.filters
+      // set query string
+      var queryString = 'NORESULTS'
+      if (this.state.filters.length > 0) {
+        queryString = '*:*'
+      }
+      if (query.length > 0) {
+        queryString = query
       }
 
-      const solrResponse = await axios.get('/solr/medications_core/select', {
-        params: qry,
+      // set parameters
+      var params = new URLSearchParams({
+        q: queryString,
+        rows: 99999,
+        wt: 'json',
       })
 
-      qry.q = old_qry
+      // add filters
+      this.state.filters.forEach((entry) => params.append('fq', entry))
+
+      // limit the queried fields
+      const desiredFields = ['id', 'name', 'class', 'prescription', 'formats']
+      desiredFields.forEach((entry) => params.append('fl', entry))
+
+      // query Solr
+      const solrResponse = await axios.get(baseURL, { params })
 
       commit('setResults', solrResponse.data.response.docs)
     },
@@ -95,12 +109,41 @@ export default createStore({
       commit('setFacetFormats', formats)
     },
 
-    addFilters({ commit }, filters) {
-      commit('setFilters', filters)
+    async facetClasses({ commit }) {
+      const solrResponse = await axios.get('/solr/medications_core/select', {
+        params: {
+          q: '*:*',
+          rows: 0,
+          facet: true,
+          'facet.field': 'class',
+        },
+      })
+
+      const response = solrResponse.data.facet_counts.facet_fields.classes
+
+      // turn array into object
+      const classes = {}
+      for (let i = 0; i < response.length; i += 2) {
+        classes[response[i]] = response[i + 1]
+      }
+
+      commit('setFacetClasses', classes)
     },
 
-    clearResults({ commit }) {
-      commit('setResults', [])
+    // Searches for a specific item with a given ID
+    async fetchItem({ commit }, id) {
+      // fetch full item from Solr
+      const baseURL = '/solr/medications_core/select'
+      const params = new URLSearchParams({
+        q: `id:${id}`,
+        rows: 1,
+        wt: 'json',
+      })
+
+      // query Solr
+      const solrResponse = await axios.get(baseURL, { params })
+
+      return solrResponse.data.response.docs[0]
     },
 
     showPanel({ commit }) {
@@ -110,10 +153,32 @@ export default createStore({
     hidePanel({ commit }) {
       commit('setShow', false)
     },
+
+    addFilters({ commit }, ft) {
+      // produce a proper filter string
+      var filterArray = []
+      const allFilters = ft['filters']
+
+      Object.keys(allFilters).forEach((field) => {
+        const filters = allFilters[field]
+        Object.entries(filters).forEach(([idx, item]) => {
+          var entry = `${field}:${item.label}`
+          if (item.state == null) {
+            entry = '-' + entry
+          }
+          filterArray.push(entry)
+        })
+      })
+      console.log(filterArray)
+      commit('setFilters', filterArray)
+    },
+
+    setMode({ commit }, mode) {
+      commit('setMode', mode)
+    },
   },
 
   getters: {
-    query: (state) => state.query,
     results: (state) => state.results,
     show: (state) => state.show,
     brands: (state) => state.brands,

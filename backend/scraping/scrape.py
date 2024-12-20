@@ -24,7 +24,7 @@ print(generate_id())
 
 # Define spiders
 # spiders = ["medlineplus", "drugs", "webmd"]
-spiders = ["medlineplus"]
+spiders = ["webmd"]
 
 output_base_path = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
 
