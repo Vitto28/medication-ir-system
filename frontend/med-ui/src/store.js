@@ -152,14 +152,13 @@ export default createStore({
 
     // use MoreLikeThis feature to find related medications
     async getRelatedDrugs({ commit }, id) {
-      console.log('FETCHING SIMILAR ITEMS')
       const baseURL = '/solr/medications_core/mlt'
       const params = {
         q: `id:${id}`,
         'mlt.fl': 'prescription', //TODO add class?
         'mlt.match.include': true,
-        'mlt.mindf': 0,
-        'mlt.mintf': 0,
+        'mlt.mindf': 1,
+        'mlt.mintf': 1,
         rows: 3,
       }
 
