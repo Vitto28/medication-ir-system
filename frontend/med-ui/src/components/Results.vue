@@ -1,10 +1,32 @@
 <template>
   <div class="d-flex flex-column align-center">
     <div class="d-flex flex-column align-center" v-if="results.length == 0" id="no_results">
-      <div class="mt-16 d-flex flex-column" v-if="!this.firstSearchPerformed">
+      <v-sheet width="800" class="mt-16 d-flex flex-column" v-if="!this.firstSearchPerformed">
         <p class="text-h2 font mb-4">Welcome to PharmaSeek!</p>
-        <p>Use the searchbar above to search for medications</p>
-      </div>
+        <h2 class="text-h5">Your trusted tool for medication information</h2>
+        <p>Easily search, explore, and learn about medications with our intuitive platform. PharmaSeek provides reliable
+          and detailed information on medications to help you make informed decisions.</p>
+        <h2 class="text-h5 mt-8">What PharmaSeek provides</h2>
+        <!-- numbered list -->
+        <ol class="ml-6 mt-2">
+          <li class="text-h6">Search for medications</li>
+          <p>Use the search bar above to find specific medications by name, description, or related terms. The results
+            will be neatly displayed in a tabular format that allows you to quickly scan and identify relevant
+            medications.</p>
+          <li class="text-h6">Refine your search</li>
+          <p>Use the filters menu on the right to narrow down your search results based on specific criteria such as
+            brand name, drug format, and drug class. This will help you find the most relevant medications for your
+            needs.</p>
+          <li class="text-h6">Explore related medications and their uses.</li>
+          <p>Click on a medication to view detailed information about its uses, side effects, storage conditions, and
+            more. Furthermore, we will automatically suggest related medications that you may find useful.</p>
+        </ol>
+
+        <h2 class="text-h5 mt-8">Disclaimer</h2>
+        <p>The data provided on this platform is for educational purposes and should not replace professional medical
+          advice, diagnosis, or treatment. Always consult a licensed healthcare provider for specific medical concerns
+          or before starting any new medication.</p>
+      </v-sheet>
       <div class="mt-16 d-flex flex-column align-center" v-else>
         <p class="text-h2 font mb-4">No results found</p>
         <p>Sorry, we couldn't find any medications matching your search :(</p>
