@@ -61,6 +61,11 @@ export default createStore({
       const desiredFields = ['id', 'name', 'class', 'prescription', 'formats']
       desiredFields.forEach((entry) => params.append('fl', entry))
 
+      // boost prescription field
+      const boost = 10
+      params.append('qf', `prescription^${boost}`)
+      params.append('qf', `_text_^1`)
+
       // query Solr
       const solrResponse = await axios.get(baseURL, { params })
 
