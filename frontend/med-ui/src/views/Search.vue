@@ -70,7 +70,7 @@
           </div>
 
           <v-container fluid class="pa-0">
-            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="formats"
+            <v-combobox density="compact" v-model:search="formatSearch" :custom-filter="filter" :items="formats"
               label="Type or select a format name" variant="solo" multiple>
               <template v-slot:item="{ item, index }">
                 <v-list-item @click.prevent="toggleState(formats, index)">
@@ -102,7 +102,7 @@
           </div>
 
           <v-container fluid class="pa-0">
-            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="brands"
+            <v-combobox density="compact" v-model:search="brandSearch" :custom-filter="filter" :items="brands"
               label="Type or select a brand name" variant="solo" multiple>
               <template v-slot:item="{ item, index }">
                 <v-list-item @click.prevent="toggleState(brands, index)">
@@ -135,7 +135,7 @@
           </div>
 
           <v-container fluid class="pa-0">
-            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="classes"
+            <v-combobox density="compact" v-model:search="classSearch" :custom-filter="filter" :items="classes"
               label="Type or select a class name" variant="solo" multiple>
               <template v-slot:item="{ item, index }">
                 <v-list-item @click.prevent="toggleState(classes, index)">
@@ -196,7 +196,9 @@ export default {
     classes: [],
     mode: 0, // focus of the search (general (0), prescription (1), side effects (2))
     modeEnabled: false,
-    search: null,
+    brandSearch: null,
+    formatSearch: null,
+    classSearch: null,
 
   }),
 

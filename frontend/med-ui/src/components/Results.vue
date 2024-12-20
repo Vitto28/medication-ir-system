@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- Class -->
-                <div v-if="selectedData.classes.length > 0">
+                <div v-if="selectedData.classes && selectedData.classes.length > 0">
                   <p class="font-weight-bold">Classes:</p>
                   <v-chip v-for="clas in selectedData.classes" :key="clas" class="mr-2 mb-2" color="secondary" label>
                     {{ clas }}
