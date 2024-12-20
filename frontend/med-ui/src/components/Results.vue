@@ -171,7 +171,6 @@
 <script>
 export default {
   data: () => ({
-    selectedId: null,
     selectedData: {}, // stores the data from the selected item, as fetched from the API
     firstSearchPerformed: false,
     // defined the sections and their order in the extended-info panel
@@ -305,13 +304,13 @@ export default {
   methods: {
     async handleRowClick(id) {
       console.log('clicked row with id', id)
-      this.selectedId = id
-      // grab button with id 'open_btn' and click it
+      // TODO: replace this with a call to the API
       // choose three random related drugs and set them to selectedRelatedDrugs
       this.selectedRelatedDrugs = this.relatedDrugs.sort(() => Math.random() - 0.5).slice(0, 3)
-      document.getElementById('open_btn').click()
       // fetch full data of the selected item
       this.selectedData = await this.$store.dispatch('fetchItem', id)
+      // grab button with id 'open_btn' and click it
+      document.getElementById('open_btn').click()
       this.$store.dispatch('showPanel')
     },
   },
