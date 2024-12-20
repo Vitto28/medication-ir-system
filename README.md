@@ -1,16 +1,7 @@
 # Medication Information Retrieval (IR) System
 
-## Overview
-
-TODO: Add description
-
-## Features
-
-TODO: List features
-
-## Project Structure
-
-TODO: Add structure
+## Data Download
+The main file we created and then indexed into Solr can be found at the following link (https://drive.google.com/file/d/1q0W2-Q3Y-BYFV9x13Bi9KWIB9z9ZU5NS/view?usp=sharing)
 
 ## Setup
 
