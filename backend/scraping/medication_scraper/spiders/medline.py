@@ -4,9 +4,6 @@ import scrapy
 class MedlinePlusSpider(scrapy.Spider):
     name = "medlineplus"
     start_urls = ["https://medlineplus.gov/druginformation.html"]
-    crawl_count = 0  # Add a counter to keep track of crawled items
-    parse_count = 0  # Counter for the number of items parsed
-    limit = 30  # Set the limit for the number of items to crawl and parse
 
     def parse(self, response):
         print("Parsing main page")
@@ -15,8 +12,6 @@ class MedlinePlusSpider(scrapy.Spider):
 
         # Step 2: Iterate over each letter link and follow it
         for link in letter_links:
-            if self.crawl_count >= self.limit:
-                break
             yield response.follow(link, callback=self.parse_drug_list)
 
     def parse_drug_list(self, response):
@@ -26,9 +21,6 @@ class MedlinePlusSpider(scrapy.Spider):
 
         # Step 4: Iterate over each drug link and follow it to get drug details
         for link in drug_links:
-            if self.crawl_count >= self.limit:
-                break  # Stop if we have already scraped the desired number of items
-
             # ignore injections and vaccines
             title = link.xpath("text()").get().lower()
             if "injection" in title or "vaccine" in title:
@@ -38,16 +30,10 @@ class MedlinePlusSpider(scrapy.Spider):
             # Obtain href
             href = link.xpath("@href").get()
 
-            self.crawl_count += 1
             yield response.follow(href, callback=self.parse_drug_details)
 
     def parse_drug_details(self, response):
         print("Parsing drug details page")
-        # Increment the item count
-        if self.parse_count >= self.limit:
-            return  # Stop processing if the limit has been reached
-
-        self.parse_count += 1
 
         # Step 5: Extract drug details
         drug_name = response.xpath("//h1/text()").get()
