@@ -61,18 +61,36 @@
             that filtering uses an <b>AND</b> operator, so only results that match all selected filters will be shown.
           </p>
           <!-- Formats -->
-          <div class="d-flex mb-2 align-center">
+          <div class="d-flex mb-2 mt-4 align-center">
             <h4 class="text-h6 font-weight-bold">Formats</h4>
             <!-- clear all -->
             <v-btn class="ml-2" prepend-icon="mdi-trash-can-outline" variant="text" @click="clearFilters(formats)">
               clear all
             </v-btn>
           </div>
-          <!-- Formats -->
-          <v-chip class="ma-1" v-for="(format, index) in formats" :key="index" @click="toggleState(formats, index)"
-            :color="format.state === true ? 'secondary' : format.state === null ? 'error' : 'grey lighten-1'">
-            {{ format.label }}
-          </v-chip>
+
+          <v-container fluid class="pa-0">
+            <v-combobox density="compact" v-model:search="search" :custom-filter="filter" :items="formats"
+              label="Type or select a format name" variant="solo" multiple>
+              <template v-slot:item="{ item, index }">
+                <v-list-item @click.prevent="toggleState(formats, index)">
+                  <v-chip
+                    :color="item.raw.state === true ? 'secondary' : item.raw.state === null ? 'error' : 'grey lighten-1'"
+                    :text="item.raw.label" label></v-chip>
+                </v-list-item>
+              </template>
+            </v-combobox>
+            <!-- List the included AND excluded formats -->
+            <p v-if="filteredFormats.length > 0">Filtered formats are:</p>
+            <p v-else>No filtered formats selected.</p>
+            <v-container class="pa-0">
+              <v-chip class="ma-1" v-for="(format, index) in filteredFormats" :key="index"
+                :color="format.state === true ? 'secondary' : 'error'">{{
+                  format.label
+                }}</v-chip>
+            </v-container>
+          </v-container>
+          <!-- end formats -->
 
           <!-- Brands -->
           <div class="d-flex mb-2 mt-4 align-center">
@@ -186,6 +204,7 @@ export default {
   async beforeMount() {
     await this.$store.dispatch('facetBrands')
     await this.$store.dispatch('facetFormats')
+    await this.$store.dispatch('facetClasses')
 
     var formats = this.$store.getters.formats
     this.formats = Object.keys(formats).map((key) => ({
@@ -198,6 +217,13 @@ export default {
     this.brands = Object.keys(brands).map((key) => ({
       label: key,
       count: brands[key],
+      state: false,
+    }))
+
+    var classes = this.$store.getters.classes
+    this.classes = Object.keys(classes).map((key) => ({
+      label: key,
+      count: classes[key],
       state: false,
     }))
   },

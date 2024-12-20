@@ -8,6 +8,7 @@ export default createStore({
     show: false, // shows side panel
     brands: {},
     formats: {},
+    classes: {},
     filters: [],
     mode: '0',
   },
@@ -23,6 +24,9 @@ export default createStore({
     },
     setFacetFormats(state, formats) {
       state.formats = formats
+    },
+    setFacetClasses(state, classes) {
+      state.classes = classes
     },
     setFilters(state, filters) {
       state.filters = filters
@@ -57,7 +61,7 @@ export default createStore({
       this.state.filters.forEach((entry) => params.append('fq', entry))
 
       // limit the queried fields
-      const desiredFields = ['id', 'name', 'class', 'prescription', 'formats']
+      const desiredFields = ['id', 'name', 'classes', 'prescription', 'formats']
       desiredFields.forEach((entry) => params.append('fl', entry))
 
       // boost prescription field
@@ -119,7 +123,7 @@ export default createStore({
           q: '*:*',
           rows: 0,
           facet: true,
-          'facet.field': 'class',
+          'facet.field': 'classes',
         },
       })
 
@@ -204,5 +208,6 @@ export default createStore({
     show: (state) => state.show,
     brands: (state) => state.brands,
     formats: (state) => state.formats,
+    classes: (state) => state.classes,
   },
 })

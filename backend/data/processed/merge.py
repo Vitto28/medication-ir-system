@@ -27,16 +27,27 @@ with open(os.path.join(output_path, 'drugs.json'), 'r') as f:
 # Create a mapping for fast lookup in file1
 file1_map = {obj['name']: obj for obj in file1}
 
+# Function to find the best matching name in file1_map based on substring match
+def find_matching_name(name, file1_map):
+    for key in file1_map:
+        if name in key:  # Substring match
+            return key
+    return None
+
 # Iterate over file2 and extend file1
 for obj2 in file2:
     name = obj2['name']
-    if name in file1_map:
+    matching_name = find_matching_name(name, file1_map)
+    if matching_name:
         # Extend existing object in file1
-        file1_map[name]['brand_names'] = list(set(file1_map[name].get('brand_names', []) + obj2.get('brand_names', [])))
-        file1_map[name].setdefault('formats', []).extend(obj2.get('formats', []))
-        file1_map[name].setdefault('classes', []).extend(obj2.get('classes', []))
-        
-        
+        file1_map[matching_name]['brand_names'] = list(set(file1_map[matching_name].get('brand_names', []) + obj2.get('brand_names', [])))
+        file1_map[matching_name].setdefault('formats', []).extend(obj2.get('formats', []))
+        file1_map[matching_name].setdefault('classes', []).extend(obj2.get('classes', []))
+
+# Remove repeated elements in the 'classes' field for all objs in file1
+for obj in file1:
+    if 'classes' in obj:
+        obj['classes'] = list(set(obj['classes']))
 
 output_file = f"{'merged'}_{generate_id()}.json"
 

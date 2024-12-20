@@ -41,7 +41,8 @@
           <template v-slot:body="{ items }">
             <tr class="row" v-for="item in items" :key="item.id" @click="handleRowClick(item.id)">
               <td>{{ item.name }}</td>
-              <td>{{ item.classes && item.classes.length > 0 ? item.classes.join(', ') : 'None' }}</td>
+              <td class="clas textwrap">{{ item.classes && item.classes.length > 0 ? item.classes.join(', ') : 'None' }}
+              </td>
               <td class="description textwrap">{{ item.prescription }}</td>
               <td class="formats textwrap">{{ item.formats.join(', ') }}</td>
             </tr>
@@ -83,20 +84,19 @@
                 </div>
 
                 <!-- Class -->
-                <div class="d-flex">
-                  <p class="font-weight-bold mr-1 mb-4">Class:</p>
-                  <!-- TODO: List them -->
-                  <p>No class available</p>
+                <div v-if="selectedData.classes.length > 0">
+                  <p class="font-weight-bold">Classes:</p>
+                  <v-chip v-for="clas in selectedData.classes" :key="clas" class="mr-2 mb-2" color="secondary" label>
+                    {{ clas }}
+                  </v-chip>
+                </div>
+                <div v-else>
+                  <p>No information available on drug classes.</p>
                 </div>
 
                 <!-- Formats -->
-                <div v-if="selectedData.formats.length > 0">
+                <div class="mt-5" v-if="selectedData.formats.length > 0">
                   <p>Can be administered via</p>
-                  <!-- TODO Remove this once formats are properly set -->
-                  <p class="text-subtitle-2">
-                    (Note: This is placeholder information, may not match what's given below)
-                  </p>
-
                   <v-chip v-for="format in selectedData.formats" :key="format" class="mr-2 mb-2" color="secondary"
                     label>
                     {{ format }}
@@ -276,7 +276,11 @@ export default {
 }
 
 .description {
-  max-width: 800px;
+  max-width: 700px;
+}
+
+.clas {
+  max-width: 200px;
 }
 
 .formats {
