@@ -7,7 +7,7 @@
     </v-row>
     <v-row id="container" justify="center">
       <v-col>
-        <div class="d-flex align-center">
+        <div v-if="modeEnabled" class="d-flex align-center">
           <!-- Search focus -->
           <v-tabs v-model="mode">
             <v-tab value="0" text="General Search">
@@ -108,6 +108,7 @@
           <!-- end brands -->
 
           <!-- Classes -->
+           <!-- TODO: Might be only one? -->
           <div class="d-flex mb-2 mt-4 align-center">
             <h4 class="text-h6 font-weight-bold">Classes</h4>
             <!-- clear all -->
@@ -177,6 +178,7 @@ export default {
     brands: [],
     classes: [],
     mode: 0, // focus of the search (general (0), prescription (1), side effects (2))
+    modeEnabled: false,
     search: null,
 
   }),
